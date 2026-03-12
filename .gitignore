@@ -1,0 +1,53 @@
+# Environment & secrets
+.env
+service_account.json
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/stats/
+
+# Planning / prompt / internal documents (not part of deployment)
+agent_execution_plan.txt
+agent_master_prompt.txt
+best_practices.txt
+client_dashboard_features.txt
+final_deployment_validation.txt
+logic.txt
+master_system_design.txt
+pre_git_functionality_check.txt
+pre_git_security_check.txt
+prompt.txt
+qa_checklist.txt
+repo_cleanup_before_push.txt
+streamlit_apify_hidden_issues_fix.txt
+streamlit_date_filter_prompt.txt
+streamlit_ui_layout_prompt.txt
+what_not_to_do.txt
+what_to_do.txt
