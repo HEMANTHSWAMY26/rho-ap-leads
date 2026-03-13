@@ -46,8 +46,9 @@ def _get_value(key: str, default: str = "") -> str:
         if key in st.secrets:
             value = st.secrets[key]
             # st.secrets may return a dict for nested TOML; convert to JSON string
-            if isinstance(value, dict):
+            if hasattr(value, "items"):
                 import json
+                # Convert to a real dict so json.dumps uses double quotes and escapes properly
                 return json.dumps(dict(value))
             return str(value)
     except Exception:
