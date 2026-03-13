@@ -20,17 +20,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def _secrets_toml_exists() -> bool:
-    """Return True if a Streamlit secrets.toml file exists in a known location."""
-    import pathlib
-    candidates = [
-        # Global user secrets
-        pathlib.Path.home() / ".streamlit" / "secrets.toml",
-        # Project-level secrets
-        pathlib.Path(__file__).resolve().parent /
-        ".streamlit" / "secrets.toml",
-    ]
-    return any(p.exists() for p in candidates)
 
 
 def _get_value(key: str, default: str = "") -> str:
@@ -51,18 +40,18 @@ def _get_value(key: str, default: str = "") -> str:
     if env_val:
         return env_val
 
-    # 2. Streamlit secrets — only if secrets.toml actually exists on disk
-    if _secrets_toml_exists():
-        try:
-            import streamlit as st
-            if key in st.secrets:
-                value = st.secrets[key]
-                # st.secrets may return a dict for nested TOML; convert to JSON string
-                if isinstance(value, dict):
-                    return json.dumps(dict(value))
-                return str(value)
-        except Exception:
-            pass  # Streamlit not running or key not found
+    # 2. Streamlit secrets — try accessing directly (works on Cloud and local)
+    try:
+        import streamlit as st
+        if key in st.secrets:
+            value = st.secrets[key]
+            # st.secrets may return a dict for nested TOML; convert to JSON string
+            if isinstance(value, dict):
+                import json
+                return json.dumps(dict(value))
+            return str(value)
+    except Exception:
+        pass  # Streamlit not running or key not found
 
     return default
 
