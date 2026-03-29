@@ -240,36 +240,50 @@ def render_date_selector(df: pd.DataFrame):
     return selected_date
 
 
-def render_download_buttons(filtered_df: pd.DataFrame, selected_date) -> None:
+def render_download_buttons(filtered_df: pd.DataFrame, all_df: pd.DataFrame, selected_date) -> None:
     """
-    Render CSV and Excel download buttons left-aligned, below the date selector.
-    Buttons are only shown when there is data to download.
+    Render CSV, Excel, and All Leads download buttons left-aligned.
     """
-    if filtered_df.empty:
+    if filtered_df.empty and all_df.empty:
         return
 
     date_str = selected_date.strftime("%Y-%m-%d")
-    col1, col2, col3 = st.columns([1, 1, 4])  # left-aligned in first two cols
+    
+    # Create 4 columns so the buttons aren't too wide
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 3]) 
 
     with col1:
-        csv_bytes = _to_csv_bytes(filtered_df)
-        st.download_button(
-            label="⬇️ Download CSV",
-            data=csv_bytes,
-            file_name=f"job_leads_{date_str}.csv",
-            mime="text/csv",
-            use_container_width=True,
-        )
+        if not filtered_df.empty:
+            csv_bytes = _to_csv_bytes(filtered_df)
+            st.download_button(
+                label="⬇️ Download CSV",
+                data=csv_bytes,
+                file_name=f"job_leads_{date_str}.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
 
     with col2:
-        excel_bytes = _to_excel_bytes(filtered_df)
-        st.download_button(
-            label="⬇️ Download Excel",
-            data=excel_bytes,
-            file_name=f"job_leads_{date_str}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True,
-        )
+        if not filtered_df.empty:
+            excel_bytes = _to_excel_bytes(filtered_df)
+            st.download_button(
+                label="⬇️ Download Excel",
+                data=excel_bytes,
+                file_name=f"job_leads_{date_str}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True,
+            )
+            
+    with col3:
+        if not all_df.empty:
+            all_csv_bytes = _to_csv_bytes(all_df)
+            st.download_button(
+                label="📂 Download ALL Leads",
+                data=all_csv_bytes,
+                file_name="job_leads_ALL_DATES.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
 
 
 def render_table(filtered_df: pd.DataFrame, selected_date) -> None:
@@ -385,7 +399,7 @@ def main() -> None:
     st.divider()
 
     # ── Download Buttons (left-aligned, below date selector) ──────────
-    render_download_buttons(filtered_leads, selected_date)
+    render_download_buttons(filtered_leads, all_leads, selected_date)
 
     st.divider()
 
